@@ -1,0 +1,67 @@
+<%- include('partials/header', { title: '会员查询' }) %>
+<%- include('partials/navbar', {basePath: basePath}) %>
+
+    <!-- views/memberQuery.ejs -->
+    <div class="container mx-auto" style="max-width: 800px;">
+        <h1 class="text-center mt-5">会员查询</h1>
+        <p class="text-center mt-3">请输入公司名称和联系人手机号进行查询。</p>
+        <form class="mt-4" action="/api/members/query" method="POST">
+            <div class="form-group">
+                <input type="text" class="form-control" id="company_name" placeholder="请输入公司名称" required>
+            </div>
+            <div class="form-group mt-1">
+                <input type="text" class="form-control" id="contact_phone" placeholder="请输入联系人手机号" required>
+            </div>
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary btn-block bg-green">查询会员</button>
+            </div>
+        </form>
+        <div id="queryResult" class="mt-4"></div>
+    </div>
+    <!-- Tabler JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js"></script>
+    <script>
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const company_name = document.getElementById('company_name').value;
+            const contact_phone = document.getElementById('contact_phone').value;
+
+            fetch('<%= basePath %>/api/members/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ company_name, contact_phone }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // 显示查询结果
+                    const queryResult = document.getElementById('queryResult');
+                    queryResult.innerHTML = '';
+                    if (data.members.length > 0) {
+                        data.members.forEach(member => {
+                            queryResult.innerHTML += `
+                                <div class="card mt-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${member.company_name}</h5>
+                                        <p class="card-text">联系人手机号：${member.contact_phone}</p>
+                                        <p class="card-text">电子邮件地址：${member.email}</p>
+                                        <p class="card-text">申请日期：${member.created_at}</p>
+
+                                        </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        queryResult.innerHTML = '<p>未找到匹配的会员信息。</p>';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    // 显示错误信息
+                    document.getElementById('queryResult').innerHTML = '<p>查询失败，请重试。</p>';
+                });
+        });
+    </script>
+<%- include('partials/footer') %>

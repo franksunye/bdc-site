@@ -1,0 +1,77 @@
+<%- include('partials/header', { title: '入会申请' }) %>
+<%- include('partials/navbar', {basePath: basePath}) %>
+
+    <!-- views/membership_application.ejs -->
+    <div class="container mx-auto" style="max-width: 800px;">
+        <h1 class="text-center mt-5">入会申请</h1>
+        <p class="text-center mt-3">欢迎加入中国建材流通协会大数据中心，请填写以下信息提交入会申请。</p>
+        <form class="mt-4" action="/api/members" method="POST">
+            <div class="form-group">
+                <input type="text" class="form-control" id="company_name" placeholder="请输入公司名称" required>
+            </div>
+            <div class="form-group mt-1">
+                <input type="text" class="form-control" id="contact_name" placeholder="请输入联系人姓名" required>
+            </div>
+            <div class="form-group mt-1">
+                <input type="text" class="form-control" id="contact_phone" placeholder="请输入联系人电话" required>
+            </div>
+            <div class="form-group mt-1">
+                <input type="text" class="form-control" id="contact_position" placeholder="请输入联系人职位">
+            </div>
+            <div class="form-group mt-1">
+                <input type="email" class="form-control" id="email" placeholder="请输入电子邮件" required>
+            </div>
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary btn-block bg-green">提交申请</button>
+            </div>
+        </form>
+        <div id="alertContainer" class="mt-4"></div>
+    </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const company_name = document.getElementById('company_name').value;
+            const contact_name = document.getElementById('contact_name').value;
+            const contact_phone = document.getElementById('contact_phone').value;
+            const contact_position = document.getElementById('contact_position').value;
+            const email = document.getElementById('email').value;
+
+            fetch('<%= basePath %>/api/members', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ company_name, contact_name, contact_phone, contact_position, email }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // 显示成功的Alerts
+                    showAlert('success', '申请已成功提交！', '感谢您的申请，我们会及时与您进行联系。');
+                    // 清空表单字段
+                    document.getElementById('company_name').value = '';
+                    document.getElementById('contact_name').value = '';
+                    document.getElementById('contact_phone').value = '';
+                    document.getElementById('contact_position').value = '';
+                    document.getElementById('email').value = '';
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    // 显示错误的Alerts
+                    showAlert('danger', '提交失败，请重试。');
+                });
+        });
+
+        function showAlert(type, title, message) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <h4 class="alert-title">${title}</h4>
+            <div class="text-secondary">${message}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+        }
+    </script>
+    
+<%- include('partials/footer') %>

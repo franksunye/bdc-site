@@ -1,0 +1,61 @@
+<%- include('partials/header', { title: '留言页面' }) %>
+<%- include('partials/navbar', {basePath: basePath}) %>
+
+    <!-- views/message.ejs -->
+    <div class="container mx-auto" style="max-width: 800px;">
+        <h1 class="text-center mt-5">留言页面</h1>
+        <p class="text-center mt-3">欢迎来到建材流通协会大数据中心，我们致力于提供最新的建材信息。有任何问题或建议，欢迎通过留言联系我们。</p>
+        <form class="mt-4" action="/api/messages" method="POST">
+            <div class="form-group">
+                <input type="text" class="form-control" id="name" placeholder="请输入姓名">
+            </div>
+            <div class="form-group mt-1">
+                <textarea class="form-control" id="message" rows="3" placeholder="请输入留言"></textarea>
+            </div>
+            <div class="form-group mt-3">
+                <button type="submit" class="btn btn-primary btn-block bg-green">   提交    </button>
+            </div>
+        </form>
+        <div id="alertContainer" class="mt-4"></div>
+    </div>
+    <script>
+        document.querySelector('form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const message = document.getElementById('message').value;
+
+            fetch('<%= basePath %>/api/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, message }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // 显示成功的Alerts
+                    showAlert('success', '消息已成功提交！', '感谢留言，我们会及时与您进行联系。');
+                    // 清空表单字段
+                    document.getElementById('name').value = '';
+                    document.getElementById('message').value = '';
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    // 显示错误的Alerts
+                    showAlert('danger', '提交失败，请重试。');
+                });
+        });
+
+        function showAlert(type, title, message) {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <h4 class="alert-title">${title}</h4>
+            <div class="text-secondary">${message}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    `;
+        }
+    </script>
+<%- include('partials/footer') %>
