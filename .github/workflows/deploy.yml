@@ -16,7 +16,13 @@ jobs:
       uses: shimataro/ssh-key-action@v2
       with:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        known_hosts: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC5B7uINUVXnMQRvqyMh5W4Hd1WeNgOW2+dAJMjRuesjT3UhB3bAv099JaxqvA5tbjm/wwbUiVHiiBNsCg/+arLSw9BjX7EczbatZHaIEhuVT/r/4yLZxqc1Hn4PoMK7SV53AgjIvKe7XbxuoGvG4iFFVUHOHtQPajf6qGioUC1gT44PfY3O5OSkNCHtcWb9IertSy99r7SAJx5ntEePUzgLUrQ/AXvF0cUurwpb28exaM3YVy+OHMUBitDdDglmYiGdhaGr/hNsvE0GUXy4bb3f0gbusuZ2372pOp2Fxmwt2dKP6idjxJETZj1HfWgKIUbezcHAy91oZIUET3ASDw0WVQm3BntryjeEZX6oSoJJzqGszzGISuKANaYJa8RLstOn1E376GChUf82ZMhrTXROQNsLDWf1wkjitK723x8CRw7GjeY14wz+f9rTY0YVMcJ4ft04ICzrH9Fnru/TBfY/9LYFjkgUbsLULqRXYR59zxAUPYBEwsPinreEzpleP2ithFz4wOVBguyAqfinCjrFSM4GIRX0G8LBtO6biLdtrtsS4rziGZxzNZ0AF2a+MpgbHteCBPYfo3hpqysGUILroPoUtzHmA6bAOLxWpxr03bFtXp3L2B5xR8iVULZ7L5RPwDCYZPQVmrifViqFz4QSyeonGSLPuTHLALPZkk9iQ== franksunye@hotmail.com'
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+    - name: Setup known_hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H 39.105.21.143 >> ~/.ssh/known_hosts
+
     - name: Deploy to Server
       run: |
         ssh root@39.105.21.143 'cd /home/admin/github && git pull'
