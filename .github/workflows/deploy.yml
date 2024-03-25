@@ -32,4 +32,4 @@ jobs:
 
       - name: Copy code to running directory
         run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'rsync -av --delete /home/admin/github/ /home/admin/bdc-site/'
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} 'rsync -av /home/admin/github/ /home/admin/bdc-site/'
