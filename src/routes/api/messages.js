@@ -9,13 +9,10 @@ const router = new Router({
 
 // 创建消息接口
 router.post('/', async (ctx) => {
-    const { member_id, message } = ctx.request.body;
+    const messageData = ctx.request.body;
 
     try {
-        const newMessage = await knex('messages').insert({
-            member_id,
-            message
-        }).returning('*');
+        const newMessage = await knex('messages').insert(messageData).returning('*');
 
         ctx.status = 201; // Created
         ctx.body = newMessage;

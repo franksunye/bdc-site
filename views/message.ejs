@@ -7,7 +7,10 @@
         <p class="text-center mt-3">欢迎来到建材流通协会大数据中心，我们致力于提供最新的建材信息。有任何问题或建议，欢迎通过留言联系我们。</p>
         <form class="mt-4" action="/api/messages" method="POST">
             <div class="form-group">
-                <input type="text" class="form-control" id="name" placeholder="请输入姓名">
+                <input type="text" class="form-control" id="name" placeholder="请输入会员名称（公司名）或您的姓名">
+            </div>
+            <div class="form-group mt-1">
+                <input type="text" class="form-control" id="phone_number" placeholder="请输入手机号，我们会与您及时联系">
             </div>
             <div class="form-group mt-1">
                 <textarea class="form-control" id="message" rows="3" placeholder="请输入留言"></textarea>
@@ -24,13 +27,14 @@
 
             const name = document.getElementById('name').value;
             const message = document.getElementById('message').value;
+            const phone_number = document.getElementById('phone_number').value;
 
             fetch('<%= basePath %>/api/messages', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, message }),
+                body: JSON.stringify({ name, message, phone_number }), 
             })
                 .then(response => response.json())
                 .then(data => {
@@ -39,6 +43,7 @@
                     // 清空表单字段
                     document.getElementById('name').value = '';
                     document.getElementById('message').value = '';
+                    document.getElementById('phone_number').value = '';
                 })
                 .catch((error) => {
                     console.error('Error:', error);
