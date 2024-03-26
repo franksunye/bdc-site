@@ -12,6 +12,12 @@ router.post('/', async (ctx) => {
     const messageData = ctx.request.body;
 
     try {
+        const member = await knex('members').where('company_name', messageData.name).first();
+        if (member) {
+            messageData.member_id = member.id;
+            logger.info(`[messages.js] Found member with ID: ${member.id} for company name: ${messageData.name}`);
+        }
+
         const newMessage = await knex('messages').insert(messageData).returning('*');
 
         ctx.status = 201; // Created
