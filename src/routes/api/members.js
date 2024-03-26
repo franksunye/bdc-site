@@ -22,6 +22,21 @@ router.post('/', async (ctx) => {
         }
     }
 
+    // 检查数据库中是否已经存在相同的公司名称和手机号
+    const existingMember = await knex('members')
+        .where({ company_name: memberData.company_name, contact_phone: memberData.contact_phone })
+        .first();
+    
+    logger.info(`[members.js] checkExistingMember: Checked for existing member with company name: ${memberData.company_name} and contact phone: ${memberData.contact_phone}. Result: ${existingMember ? 'Member exists' : 'Member does not exist'}`);
+
+    if (existingMember) {
+        // 如果已经存在，返回错误信息给客户端
+        ctx.status = 400; // Bad Request
+        ctx.body = { error: '公司名称和手机号已经存在，请勿重复申请。' };
+        logger.error(`[members.js] addNewMemberFailed: Failed to add new member due to duplicate company name or phone number.`);
+        return;
+    }
+
     // 插入新的成员记录
     try {
         const newMember = await knex('members').insert(memberData).returning('*');
