@@ -33,7 +33,7 @@ router.post('/', async (ctx) => {
 // 读取所有消息接口
 router.get('/', async (ctx) => {
     try {
-        const messages = await knex('messages').select('*');
+        const messages = await knex('messages').select('*').orderBy('created_at', 'desc');
 
         ctx.status = 200; // OK
         ctx.body = messages;
