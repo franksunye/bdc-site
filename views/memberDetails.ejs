@@ -1,0 +1,49 @@
+<%- include('partials/header', { title: '会员详情' }) %>
+<%- include('partials/navbar', {basePath: basePath}) %>
+
+<div class="container mx-auto" style="max-width: 800px;">
+    <h1 class="text-center mt-5">会员详情</h1>
+    <div id="memberDetails" class="mt-4"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const memberId = '<%= memberId %>'; // 从模板中获取会员ID
+        fetch(`<%= basePath %>/api/members/${memberId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            const memberDetails = document.getElementById('memberDetails');
+            memberDetails.innerHTML = `
+                <h2>${data.company_name}</h2>
+                <p>公司网址：${data.website}</p>
+                <p>公司Logo：<img src="${data.logo}" alt="公司Logo"></p>
+                <p>联系人姓名：${data.contact_name}</p>
+                <p>联系人手机号：${data.contact_phone}</p>
+                <p>联系人职位：${data.contact_position}</p>
+                <p>电子邮件地址：${data.email}</p>
+                <p>创建日期：${data.created_at}</p>
+                <p>更新日期：${data.updated_at}</p>
+                <p>创建者：${data.created_by}</p>
+                <p>更新者：${data.updated_by}</p>
+                <p>是否激活：${data.is_active ? '是' : '否'}</p>
+                <p>联系地址：${data.address}</p>
+                <p>查看次数：${data.view_count}</p>
+                <p>点赞次数：${data.like_count}</p>
+                <p>公司介绍图片：<img src="${data.company_intro_image}" alt="公司介绍图片"></p>
+                <p>公司介绍文字：${data.company_intro_text}</p>
+                <p>名片背景图：<img src="${data.card_background_image}" alt="名片背景图"></p>
+            `;
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            document.getElementById('memberDetails').innerHTML = '<p>获取会员详情失败，请重试。</p>';
+        });
+    });
+</script>
+
+<%- include('partials/footer') %>
