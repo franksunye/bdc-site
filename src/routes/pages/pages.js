@@ -1,6 +1,7 @@
 // src/routes/pages/home.js
 const Router = require('koa-router');
 const logger = require('../../config/logger');
+const { getMemberDetails } = require('../../controllers/memberController');
 
 const router = new Router();
 
@@ -63,11 +64,21 @@ router.get('/member/details/:id', async (ctx) => {
     const { id } = ctx.params;
     ctx.state.basePath = process.env.BASE_PATH || '';
     logger.info(`[pages.js] basePath: ${ctx.state.basePath}`);
-    await ctx.render('memberDetails', {
-        basePath: ctx.state.basePath,
-        memberId: id // 传递会员ID到模板中
-    });
-    logger.info(`[pages.js] renderMemberDetails: Member details page rendered successfully, member ID: ${id}`);
+
+    try {
+        const memberDetails = await getMemberDetails(id); // 使用 controller 中的函数获取会员详情
+
+        await ctx.render('memberDetails', {
+            basePath: ctx.state.basePath,
+            memberDetails: memberDetails // 传递会员详情到模板中
+        });
+        logger.info(`[pages.js] renderMemberDetails: Member details page rendered successfully, member ID: ${id}`);
+    } catch (error) {
+        ctx.status = 500; // Internal Server Error
+        ctx.body = { error: '服务器错误' };
+        logger.error(`[pages.js] renderMemberDetailsFailed: Failed to render member details page, error: ${error.message}`);
+    }
+
 });
 
 module.exports = router;

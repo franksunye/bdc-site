@@ -2,6 +2,7 @@
 const Router = require('koa-router');
 const knex = require('knex')(require('../../db/knexfile').development);
 const logger = require('../../config/logger');
+const { getMemberDetails } = require('../../controllers/memberController');
 
 const router = new Router({
     prefix: '/api/members'
@@ -52,20 +53,12 @@ router.post('/', async (ctx) => {
     }
 });
 
-
 // 会员查询接口
 router.get('/:id', async (ctx) => {
     const { id } = ctx.params;
 
     try {
-        const member = await knex('members').where('id', id).first();
-
-        if (!member) {
-            ctx.status = 404; // Not Found
-            ctx.body = { error: '成员不存在' };
-            logger.error(`[members.js] queryMemberFailed: Failed to query member with ID: ${id}`);
-            return;
-        }
+        const member = await getMemberDetails(id); // 使用 controller 中的函数
 
         ctx.status = 200; // OK
         ctx.body = member;

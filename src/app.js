@@ -3,6 +3,7 @@ const Koa = require('koa');
 const bodyParser = require('koa-bodyparser');
 const views = require('koa-views');
 const path = require('path');
+const serve = require('koa-static');
 
 const standardsRouter = require('./routes/api/standards');
 const membersRouter = require('./routes/api/members');
@@ -16,7 +17,9 @@ dotenv.config({ path: envFile });
 
 const app = new Koa();
 
-app.use(views(path.join(__dirname, '../views'), {
+app.use(serve(path.join(__dirname, '..', 'public')));
+
+app.use(views(path.join(__dirname, '..', 'views'), {
   extension: 'ejs'
  }));
 
