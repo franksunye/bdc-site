@@ -3,7 +3,7 @@
 
 <style>
     .header-image {
-        background-image: url('<%= memberDetails.card_background_image %>');
+        background-image: url('<%= basePath %><%= memberDetails.card_background_image %>');
         background-size: cover;
         background-position: center;
         padding: 20px;
@@ -56,7 +56,7 @@
                 <p><%= memberDetails.contact_position %></p>
             </div>
             <div class="right">
-                <img src="<%= memberDetails.logo %>" alt="公司Logo">
+                <img src="<%= basePath %><%= memberDetails.logo %>" alt="公司Logo">
                 <a href="<%= memberDetails.website %>" target="_blank"><%= memberDetails.website %></a>
             </div>
         </div>
@@ -66,7 +66,7 @@
         <p><%= memberDetails.company_name %></p>
     </div>
     <div class="mt-4">
-        <img src="<%= memberDetails.company_intro_image %>" alt="公司介绍图片" class="img-fluid">
+        <img src="<%= basePath %><%= memberDetails.company_intro_image %>" alt="公司介绍图片" class="img-fluid">
     </div>
 </div>
 
